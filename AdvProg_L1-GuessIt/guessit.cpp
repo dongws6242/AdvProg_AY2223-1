@@ -30,7 +30,7 @@ int generateRandomNumber() {
 ***/
 int getPlayerGuess() {
     // TODO: Ask the player guest and return the player's number
-    cout << "what is your number" ;
+    
     int numberPlayer;
     cin >> numberPlayer;
     
@@ -76,11 +76,9 @@ string getAnswer(int number, int randomNumber) {
 ***/
 bool checkSuccess(string answer) {
     // TODO: return the result after checking that player guessed right or wrong
-    bool checkone;
+    bool checkone = true;
     if ( answer != "Congratulation! You win." ){
         checkone = false;
-    }{
-        checkone = true;
     }
     
     return checkone;
