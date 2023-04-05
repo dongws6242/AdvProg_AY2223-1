@@ -1,15 +1,10 @@
 // UPDATE THIS FILE
-
 #include <vector>
 #include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include "Game.h"
-
 using namespace std;
-
-
-
 // set some attributes as default value
 // DO NOT CHANGE THIS CONSTRUCTOR
 Game::Game(int _width, int _height)
@@ -23,14 +18,10 @@ Game::Game(int _width, int _height)
 	// add new cheery in game initiation
 	addCherry();
 }
-
 Game::~Game()
 {
     //dtor
 }
-
-
-
 /*** 
  * PLEASE UPDATE THIS METHOD
  * 
@@ -49,7 +40,7 @@ Game::~Game()
  * 		// none
  * 
 ***/
-
+//
 void Game::snakeMoveTo(Position pos) {
 	//  START CODE HERE
 	//
@@ -57,6 +48,20 @@ void Game::snakeMoveTo(Position pos) {
 	//
 	//
 	// END CODE HERE
+	if ( getCellType(pos) == CELL_OFF_BOARD){
+		status = GAME_OVER;
+		return ;
+	}
+	if ( getCellType(pos) == CELL_SNAKE){
+		status = GAME_OVER;
+		return ;
+	}
+	if ( getCellType(pos) == CELL_CHERRY){
+		score ++;
+		snake.eatCherry();
+		addCherry();
+	}
+	setCellType(pos , CELL_SNAKE);
 }
 
 
@@ -78,6 +83,7 @@ void Game::snakeLeave(Position position)
 	//
 	//
 	// END CODE HERE
+	setCellType(position , CELL_EMPTY);
 }
 
 
@@ -86,8 +92,6 @@ void Game::processUserInput(Direction direction)
 {
     inputQueue.push(direction);
 }
-
-
 /***
  * PLEASE REPLACE LINES MARKED WITH '// YOUR CODE HERE'
  * 
@@ -104,8 +108,14 @@ void Game::processUserInput(Direction direction)
  ***/
 bool Game::canChange(Direction current, Direction next) const {
 	if (current == UP || current == DOWN) 
-		return 0; // YOUR CODE HERE
-	return 0;// YOUR CODE HERE
+		{
+			if ( next == UP || next == DOWN){
+				return 0 ;
+			}
+			return 1 ;
+		}
+		if ( next == LEFT || next == RIGHT ) return 0 ;
+	return 1;// YOUR CODE HERE
 }
 
 
@@ -123,27 +133,23 @@ bool Game::canChange(Direction current, Direction next) const {
  * 		// none
  * 
  ***/
-
 void Game::nextStep()
 {
 	while (!inputQueue.empty()) {
 		// get the input direction from input queue
-        Direction next ; // YOUR CODE HERE
-
+        Direction next = inputQueue.front() ; // YOUR CODE HERE
 		// remove the front of input queue
         // YOUR CODE HERE
-
+inputQueue.pop();
 		// check if snake can move to the next direction, set current direction as next
         if (canChange(currentDirection, next)) {
         	// YOUR CODE HERE
+			currentDirection = next;
         	break;
 		}
     }
-
     snake.move(currentDirection);
 }
-
-
 /***
  * PLEASE REPLACE LINES MARKED WITH '// YOUR CODE HERE'
  * 
@@ -155,7 +161,6 @@ void Game::nextStep()
  * 		// none
  * 
  ***/
-
 void Game::addCherry()
 {
     do {
@@ -163,7 +168,8 @@ void Game::addCherry()
 		// Suggestion: use rand() function
 
         Position randomPos; // YOUR CODE HERE
-		
+		randomPos.x = rand() %(width);
+randomPos.y = rand() %(height );
 		// check if the randomPos is EMPTY 
         if (getCellType(randomPos) == CELL_EMPTY) {
 
@@ -171,13 +177,12 @@ void Game::addCherry()
 
 			// YOUR CODE HERE
 			// YOUR CODE HERE
-
+cherryPosition = randomPos;
+setCellType(randomPos , CELL_CHERRY);
        		break;
         }
     } while (true);
 }
-
-
 /***
  * PLEASE UPDATE THIS METHOD
  * 
@@ -199,8 +204,10 @@ void Game::setCellType(Position pos, CellType cellType)
 	// START CODE HERE
 	//  
 	// END CODE HERE
+	if ( pos.isInsideBox(0 , 0 , width , height)){
+		squares[pos.y][pos.x] = cellType;
+	}
 }
-
 
 
 // DO NOT change this method
@@ -208,30 +215,24 @@ CellType Game::getCellType(Position pos) const
 {
 	return pos.isInsideBox(0, 0, width, height) ? squares[pos.y][pos.x] : CELL_OFF_BOARD;
 }
-
 // DO NOT change this method
 vector<Position> Game::getSnakePositions() const
 {
     return snake.getPositions();
 }
-
 // DO NOT change this method
 GameStatus Game::getGameStatus(){
 	return status;
 }
-
 // DO NOT change this method
 int Game::getWidth(){
-	return width;
+    	return width;
 }
-
 // DO NOT change this method
 int Game::getHeight(){
 	return height;
 }
-
 // DO NOT change this method
 Snake Game::getSnake(){
 	return snake;
 }
-
